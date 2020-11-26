@@ -11,13 +11,15 @@ COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Create the root directory for the application
-RUN mkdir -p /srv/app
-WORKDIR /srv/app
-VOLUME /srv/app
-ENV PYTHONPATH=$PYTHONPATH:/srv/app
+RUN mkdir -p /srv/src /srv/static
+WORKDIR /srv/src
+VOLUME /srv/src
+VOLUME /srv/static
+ENV PYTHONPATH=$PYTHONPATH:/srv/src
 
 # Set the default environment variable
 ENV LOG_FOLDER=/var/log/gunicorn
+ENV REQUIREMENTS_FILE=/srv/requirements.txt
 ENV NBR_WORKER=2
 
 EXPOSE 8000

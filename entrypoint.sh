@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 LOG_FOLDER="${LOG_FOLDER:-/var/log/gunicorn}"
+REQUIREMENTS_FILE="${REQUIREMENTS_FILE:-/srv/requirements.txt}"
 
-if [ -f "/usr/started_at.txt" ]; then
+if [ -f "/started_at.txt" ]; then
     echo "Restarting container..."
 else
   echo "Starting container..."
@@ -10,11 +11,13 @@ else
   mkdir -p "$LOG_FOLDER"
   chown www:www -R "$LOG_FOLDER"
   # Install python dependencies.
-  if ! ([ -f requirements.txt ] && pip install --progress-bar off -r requirements.txt); then
-    exit 1
+  if [ -f "$REQUIREMENTS_FILE" ]; then
+    if ! pip install --progress-bar off -r "$REQUIREMENTS_FILE"; then
+      exit 1
+    fi
   fi
   # Save the starting time of the container.
-  date > /usr/started_at.txt
+  date > /started_at.txt
 fi
 
 # Launch Gunicorn with the log saved into the folder and standard output.
